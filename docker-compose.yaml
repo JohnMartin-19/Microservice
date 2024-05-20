@@ -13,17 +13,27 @@ services:
       - db
 
   db:
-    image: mysql:5.7.22
+    image: mysql:latest
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: adminJ
       MYSQL_USER: root
       MYSQL_PASSWORD: root
-        
-    #volumes:
-      #- /.dbdata:/var/lib/mysql
+    expose:
+      - "3306"   
+    volumes:
+      - ./dbdata:/var/lib/mysql
     ports:
-      - 33066:3306
-    
+      - "3306:3306"
+  web:
+   build: .
+   command: python3 manage.py runserver 0.0.0.0:8000
+   volumes:
+    - .:/code
+   restart: always
+   ports:
+    - "8000:8000"
+   depends_on:
+    - db 
 
